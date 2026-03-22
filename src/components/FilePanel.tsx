@@ -51,7 +51,7 @@ export function FilePanel() {
   };
 
   return (
-    <div className="p-4 space-y-5">
+    <div className="p-5 space-y-7">
       <input
         ref={fileInputRef}
         type="file"
@@ -61,20 +61,20 @@ export function FilePanel() {
       />
 
       <div>
-        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
           File Operations
         </h3>
-        <div className="space-y-1.5">
+        <div className="space-y-2.5">
           <button
             onClick={handleSaveLocal}
             disabled={atoms.length === 0}
-            className="w-full px-3 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover shadow-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-colors"
+            className="w-full px-4 py-3 rounded-xl bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover shadow-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-colors"
           >
             Save to Local
           </button>
           <button
             onClick={handleImport}
-            className="w-full px-3 py-2.5 rounded-xl bg-surface-container text-on-surface text-sm font-medium hover:bg-surface-container-high border border-outline-variant transition-colors"
+            className="w-full px-4 py-3 rounded-xl bg-surface-container text-on-surface text-sm font-medium hover:bg-surface-container-high border border-outline-variant transition-colors"
           >
             Import (JSON / MOL / SDF)
           </button>
@@ -82,10 +82,10 @@ export function FilePanel() {
       </div>
 
       <div>
-        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
           Export
         </h3>
-        <div className="space-y-1.5">
+        <div className="space-y-2.5">
           <ExportButton label="JSON" onClick={handleExportJSON} disabled={atoms.length === 0} />
           <ExportButton label="MOL (V2000)" onClick={handleExportMOL} disabled={atoms.length === 0} />
           <ExportButton label="SDF" onClick={handleExportSDF} disabled={atoms.length === 0} />
@@ -102,7 +102,7 @@ function ExportButton({ label, onClick, disabled }: { label: string; onClick: ()
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full px-3 py-2.5 rounded-xl bg-surface-container text-on-surface text-sm hover:bg-surface-container-high disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-left flex items-center justify-between"
+      className="w-full px-4 py-3 rounded-xl bg-surface-container text-on-surface text-sm hover:bg-surface-container-high disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-left flex items-center justify-between"
     >
       <span>{label}</span>
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-on-surface-variant">
@@ -134,31 +134,31 @@ function LocalSaves() {
 
   return (
     <div>
-      <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+      <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
         Local Storage
       </h3>
-      <div className="space-y-1 max-h-40 overflow-y-auto">
+      <div className="space-y-2 max-h-40 overflow-y-auto">
         {saves.slice().reverse().map(save => (
           <div
             key={save.key}
-            className="flex items-center justify-between px-3 py-2 rounded-xl bg-surface-container text-xs"
+            className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-surface-container text-xs"
           >
-            <div className="truncate flex-1 mr-2">
+            <div className="truncate flex-1 mr-3">
               <span className="text-on-surface font-medium">{save.name}</span>
-              <span className="text-on-surface-variant ml-1.5">
+              <span className="text-on-surface-variant ml-2">
                 {new Date(save.date).toLocaleDateString()}
               </span>
             </div>
-            <div className="flex gap-1">
+            <div className="flex gap-1.5">
               <button
                 onClick={() => handleLoad(save.key)}
-                className="px-2 py-1 rounded-lg bg-primary-light text-primary font-medium hover:bg-primary hover:text-on-primary transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-primary-light text-primary font-medium hover:bg-primary hover:text-on-primary transition-colors"
               >
                 Load
               </button>
               <button
                 onClick={() => handleDelete(save.key)}
-                className="px-2 py-1 rounded-lg text-on-surface-variant hover:bg-danger-light hover:text-danger transition-colors"
+                className="px-2.5 py-1 rounded-lg text-on-surface-variant hover:bg-danger-light hover:text-danger transition-colors"
               >
                 Del
               </button>

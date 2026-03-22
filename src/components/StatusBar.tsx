@@ -23,8 +23,8 @@ export function StatusBar() {
   };
 
   return (
-    <div className="bg-surface border-t border-outline-variant px-5 py-1.5 flex items-center justify-between text-xs text-on-surface-variant">
-      <div className="flex items-center gap-1">
+    <div className="bg-surface border-t border-outline-variant px-6 py-2 flex items-center justify-between text-xs text-on-surface-variant">
+      <div className="flex items-center gap-2.5">
         <span>{atoms.length} atoms</span>
         <span className="opacity-40">&middot;</span>
         <span>{bonds.length} bonds</span>
@@ -41,7 +41,7 @@ export function StatusBar() {
           </>
         )}
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2.5">
         {(selectedAtomIds.length > 0 || selectedBondIds.length > 0) && (
           <>
             <span>
@@ -50,7 +50,7 @@ export function StatusBar() {
             <span className="opacity-40">&middot;</span>
           </>
         )}
-        <span className="bg-surface-container px-2 py-0.5 rounded-md font-medium text-on-surface">
+        <span className="bg-surface-container px-2.5 py-1 rounded-md font-medium text-on-surface">
           {toolLabels[toolMode] ?? toolMode}
         </span>
       </div>

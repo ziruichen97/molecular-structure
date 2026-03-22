@@ -102,13 +102,13 @@ export function Toolbar() {
   const hasSelection = selectedAtomIds.length > 0 || selectedBondIds.length > 0;
 
   return (
-    <div className="px-5 pb-3 pt-1 flex items-center gap-4 flex-wrap">
-      <div className="flex items-center bg-surface-container rounded-2xl p-1 gap-0.5">
+    <div className="px-6 pb-4 pt-1.5 flex items-center gap-6 flex-wrap">
+      <div className="flex items-center bg-surface-container rounded-2xl p-1.5 gap-1">
         {tools.map(tool => (
           <button
             key={tool.mode}
             onClick={() => setToolMode(tool.mode)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
               toolMode === tool.mode
                 ? 'bg-primary-light text-primary shadow-sm'
                 : 'text-on-surface-variant hover:bg-surface-container-high'
@@ -121,13 +121,13 @@ export function Toolbar() {
         ))}
       </div>
 
-      <div className="w-px h-7 bg-outline-variant" />
+      <div className="w-px h-8 bg-outline-variant" />
 
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-1.5">
         <button
           onClick={undo}
           disabled={historyIndex <= 0}
-          className="p-2 rounded-xl text-on-surface-variant hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed"
           title="Undo (Ctrl+Z)"
         >
           <IconUndo />
@@ -135,30 +135,30 @@ export function Toolbar() {
         <button
           onClick={redo}
           disabled={historyIndex >= history.length - 1}
-          className="p-2 rounded-xl text-on-surface-variant hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed"
           title="Redo (Ctrl+Y)"
         >
           <IconRedo />
         </button>
       </div>
 
-      <div className="w-px h-7 bg-outline-variant" />
+      <div className="w-px h-8 bg-outline-variant" />
 
       <button
         onClick={optimizeLayout}
         disabled={atoms.length === 0}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-primary text-on-primary hover:bg-primary-hover shadow-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none"
+        className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-medium bg-primary text-on-primary hover:bg-primary-hover shadow-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none"
         title="Optimize molecular geometry"
       >
         <IconOptimize />
         Optimize
       </button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {hasSelection && (
           <button
             onClick={deleteSelected}
-            className="px-4 py-2 rounded-xl text-sm font-medium bg-danger-light text-danger hover:bg-danger hover:text-on-primary"
+            className="px-5 py-2.5 rounded-xl text-sm font-medium bg-danger-light text-danger hover:bg-danger hover:text-on-primary"
             title="Delete Selected (Del)"
           >
             Delete Selected
@@ -166,7 +166,7 @@ export function Toolbar() {
         )}
         <button
           onClick={clearAll}
-          className="px-4 py-2 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-danger-light hover:text-danger"
+          className="px-5 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-danger-light hover:text-danger"
           title="Clear Canvas"
         >
           Clear

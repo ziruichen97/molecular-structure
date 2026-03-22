@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MoleculeScene } from './components/MoleculeScene';
 import { Toolbar } from './components/Toolbar';
 import { Sidebar } from './components/Sidebar';
@@ -9,6 +9,7 @@ const TOOL_MODES = ['select', 'addAtom', 'addBond', 'move', 'delete'] as const;
 
 export default function App() {
   const { undo, redo, deleteSelected, setToolMode, clearSelection, selectAll } = useMoleculeStore();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,23 +55,23 @@ export default function App() {
   return (
     <div className="h-screen w-screen flex flex-col bg-surface-dim text-on-surface overflow-hidden">
       <div className="bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.08)] z-10">
-        <header className="px-5 py-2.5 flex items-center gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-sm font-semibold text-on-primary shadow-sm">
+        <header className="px-6 py-3 flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-sm font-semibold text-on-primary shadow-sm">
               M
             </div>
             <div>
-              <h1 className="text-sm font-semibold leading-tight text-on-surface">MolBuilder</h1>
-              <p className="text-[10px] text-on-surface-variant leading-tight">3D Molecular Structure Builder</p>
+              <h1 className="text-[15px] font-semibold leading-tight text-on-surface">MolBuilder</h1>
+              <p className="text-[11px] text-on-surface-variant leading-tight">3D Molecular Structure Builder</p>
             </div>
           </div>
         </header>
         <Toolbar />
       </div>
 
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 relative">
         <MoleculeScene />
-        <Sidebar />
+        <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(v => !v)} />
       </div>
 
       <StatusBar />

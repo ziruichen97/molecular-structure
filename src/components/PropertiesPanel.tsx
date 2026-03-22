@@ -55,12 +55,12 @@ export function PropertiesPanel() {
   }, [selectedAtom, bonds, atoms]);
 
   return (
-    <div className="p-4 space-y-5">
+    <div className="p-5 space-y-7">
       <div>
-        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
           Molecule Info
         </h3>
-        <div className="bg-surface-container rounded-xl p-3 space-y-2 text-sm">
+        <div className="bg-surface-container rounded-xl p-4 space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-on-surface-variant">Formula</span>
             <span className="text-on-surface font-mono font-medium">{formula || '\u2014'}</span>
@@ -85,10 +85,10 @@ export function PropertiesPanel() {
 
       {selectedAtom && (
         <div>
-          <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+          <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
             Atom Properties
           </h3>
-          <div className="bg-surface-container rounded-xl p-3 space-y-2.5 text-sm">
+          <div className="bg-surface-container rounded-xl p-4 space-y-3 text-sm">
             <div className="flex justify-between items-center">
               <span className="text-on-surface-variant">Element</span>
               <span className="text-on-surface font-semibold">
@@ -107,7 +107,7 @@ export function PropertiesPanel() {
               <select
                 value={selectedAtom.chirality}
                 onChange={(e) => updateAtomChirality(selectedAtom.id, e.target.value as 'none' | 'R' | 'S')}
-                className="bg-surface text-on-surface rounded-lg px-2 py-1 text-xs border border-outline-variant focus:border-primary focus:outline-none"
+                className="bg-surface text-on-surface rounded-lg px-3 py-1.5 text-xs border border-outline-variant focus:border-primary focus:outline-none"
               >
                 <option value="none">None</option>
                 <option value="R">R</option>
@@ -116,17 +116,17 @@ export function PropertiesPanel() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-on-surface-variant">Charge</span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => updateAtomCharge(selectedAtom.id, selectedAtom.charge - 1)}
-                  className="w-6 h-6 rounded-lg bg-surface text-on-surface-variant text-xs hover:bg-surface-container-high flex items-center justify-center border border-outline-variant"
+                  className="w-7 h-7 rounded-lg bg-surface text-on-surface-variant text-sm hover:bg-surface-container-high flex items-center justify-center border border-outline-variant"
                 >
                   &minus;
                 </button>
-                <span className="text-on-surface w-6 text-center font-mono">{selectedAtom.charge}</span>
+                <span className="text-on-surface w-7 text-center font-mono">{selectedAtom.charge}</span>
                 <button
                   onClick={() => updateAtomCharge(selectedAtom.id, selectedAtom.charge + 1)}
-                  className="w-6 h-6 rounded-lg bg-surface text-on-surface-variant text-xs hover:bg-surface-container-high flex items-center justify-center border border-outline-variant"
+                  className="w-7 h-7 rounded-lg bg-surface text-on-surface-variant text-sm hover:bg-surface-container-high flex items-center justify-center border border-outline-variant"
                 >
                   +
                 </button>
@@ -138,7 +138,7 @@ export function PropertiesPanel() {
                 <div>
                   <span className="text-on-surface-variant text-xs font-medium">Bond Angles</span>
                   {bondAngles.map((angle, i) => (
-                    <div key={i} className="flex justify-between mt-1 text-xs">
+                    <div key={i} className="flex justify-between mt-1.5 text-xs">
                       <span className="text-on-surface-variant">
                         {angle.atom1}-{selectedAtom.element}-{angle.atom2}
                       </span>
@@ -159,10 +159,10 @@ export function PropertiesPanel() {
         const bondLength = distance(a1.position, a2.position);
         return (
           <div>
-            <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+            <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-4">
               Bond Properties
             </h3>
-            <div className="bg-surface-container rounded-xl p-3 space-y-2.5 text-sm">
+            <div className="bg-surface-container rounded-xl p-4 space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-on-surface-variant">Connection</span>
                 <span className="text-on-surface font-medium">{a1.element} \u2014 {a2.element}</span>
@@ -177,7 +177,7 @@ export function PropertiesPanel() {
                 <select
                   value={selectedBond.type}
                   onChange={(e) => updateBondType(selectedBond.id, e.target.value as 'single' | 'double' | 'triple' | 'aromatic')}
-                  className="bg-surface text-on-surface rounded-lg px-2 py-1 text-xs border border-outline-variant focus:border-primary focus:outline-none"
+                  className="bg-surface text-on-surface rounded-lg px-3 py-1.5 text-xs border border-outline-variant focus:border-primary focus:outline-none"
                 >
                   <option value="single">Single</option>
                   <option value="double">Double</option>
