@@ -3,10 +3,10 @@ import { ELEMENTS, COMMON_ELEMENTS } from '../data/elements';
 import type { BondType } from '../types/chemistry';
 
 const bondTypes: { type: BondType; label: string; symbol: string }[] = [
-  { type: 'single', label: 'Single', symbol: '—' },
+  { type: 'single', label: 'Single', symbol: '\u2014' },
   { type: 'double', label: 'Double', symbol: '=' },
-  { type: 'triple', label: 'Triple', symbol: '≡' },
-  { type: 'aromatic', label: 'Aromatic', symbol: '◎' },
+  { type: 'triple', label: 'Triple', symbol: '\u2261' },
+  { type: 'aromatic', label: 'Aromatic', symbol: '\u25CE' },
 ];
 
 export function ElementSelector() {
@@ -19,10 +19,10 @@ export function ElementSelector() {
   } = useMoleculeStore();
 
   return (
-    <div className="p-3 space-y-4">
+    <div className="p-4 space-y-5">
       <div>
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          Element Selection
+        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+          Element
         </h3>
         <div className="grid grid-cols-5 gap-1.5">
           {COMMON_ELEMENTS.map(symbol => {
@@ -32,19 +32,21 @@ export function ElementSelector() {
               <button
                 key={symbol}
                 onClick={() => setSelectedElement(symbol)}
-                className={`relative flex flex-col items-center justify-center p-1.5 rounded border transition-all ${
+                className={`relative flex flex-col items-center justify-center p-2 rounded-xl transition-all ${
                   isActive
-                    ? 'border-blue-500 bg-blue-100 ring-1 ring-blue-500'
-                    : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
+                    ? 'bg-primary-light ring-2 ring-primary shadow-sm'
+                    : 'bg-surface-container hover:bg-surface-container-high'
                 }`}
                 title={`${el.name} - Atomic Mass: ${el.atomicMass}`}
               >
                 <div
-                  className="w-4 h-4 rounded-full mb-0.5 border border-gray-300"
-                  style={{ backgroundColor: el.color }}
+                  className="w-5 h-5 rounded-full mb-1 shadow-sm"
+                  style={{ backgroundColor: el.color, border: '1.5px solid rgba(0,0,0,0.1)' }}
                 />
-                <span className="text-sm font-bold text-gray-700">{symbol}</span>
-                <span className="text-[9px] text-gray-400">{el.atomicNumber}</span>
+                <span className={`text-sm font-semibold ${isActive ? 'text-primary' : 'text-on-surface'}`}>
+                  {symbol}
+                </span>
+                <span className="text-[9px] text-on-surface-variant">{el.atomicNumber}</span>
               </button>
             );
           })}
@@ -53,7 +55,7 @@ export function ElementSelector() {
 
       {(toolMode === 'addBond' || toolMode === 'select') && (
         <div>
-          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
             Bond Type
           </h3>
           <div className="grid grid-cols-2 gap-1.5">
@@ -63,13 +65,13 @@ export function ElementSelector() {
                 <button
                   key={bt.type}
                   onClick={() => setSelectedBondType(bt.type)}
-                  className={`flex items-center gap-2 px-2 py-1.5 rounded border text-sm transition-all ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-all ${
                     isActive
-                      ? 'border-blue-500 bg-blue-100 text-gray-900'
-                      : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300'
+                      ? 'bg-primary-light text-primary ring-2 ring-primary shadow-sm font-medium'
+                      : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
                   }`}
                 >
-                  <span className="text-lg">{bt.symbol}</span>
+                  <span className="text-lg leading-none">{bt.symbol}</span>
                   <span>{bt.label}</span>
                 </button>
               );

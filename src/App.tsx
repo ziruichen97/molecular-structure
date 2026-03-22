@@ -34,20 +34,21 @@ export default function App() {
   }, [undo, redo, deleteSelected]);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-50 text-gray-900 overflow-hidden">
-      <header className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white">
-            M
+    <div className="h-screen w-screen flex flex-col bg-surface-dim text-on-surface overflow-hidden">
+      <div className="bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.08)] z-10">
+        <header className="px-5 py-2.5 flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-sm font-semibold text-on-primary shadow-sm">
+              M
+            </div>
+            <div>
+              <h1 className="text-sm font-semibold leading-tight text-on-surface">MolBuilder</h1>
+              <p className="text-[10px] text-on-surface-variant leading-tight">3D Molecular Structure Builder</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-bold leading-tight">MolBuilder</h1>
-            <p className="text-[10px] text-gray-400 leading-tight">3D Molecular Structure Builder</p>
-          </div>
-        </div>
-      </header>
-
-      <Toolbar />
+        </header>
+        <Toolbar />
+      </div>
 
       <div className="flex flex-1 min-h-0">
         <MoleculeScene />

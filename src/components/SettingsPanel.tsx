@@ -13,53 +13,64 @@ export function SettingsPanel() {
   } = useMoleculeStore();
 
   return (
-    <div className="p-3 space-y-4">
+    <div className="p-4 space-y-5">
       <div>
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
           Molecule Name
         </h3>
         <input
           type="text"
           value={moleculeName}
           onChange={(e) => setMoleculeName(e.target.value)}
-          className="w-full bg-gray-50 text-gray-800 rounded px-2 py-1.5 text-sm border border-gray-200 focus:border-blue-500 focus:outline-none"
+          className="w-full bg-surface-container text-on-surface rounded-xl px-3 py-2.5 text-sm border border-outline-variant focus:border-primary focus:outline-none"
         />
       </div>
 
       <div>
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          Display Settings
+        <h3 className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-3">
+          Display
         </h3>
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showLabels}
-              onChange={(e) => setShowLabels(e.target.checked)}
-              className="rounded bg-gray-50 border-gray-300 text-blue-500 focus:ring-blue-500"
-            />
-            <span className="text-sm text-gray-700">Show Atom Labels</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showBondInfo}
-              onChange={(e) => setShowBondInfo(e.target.checked)}
-              className="rounded bg-gray-50 border-gray-300 text-blue-500 focus:ring-blue-500"
-            />
-            <span className="text-sm text-gray-700">Show Bond Lengths</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showAxes}
-              onChange={(e) => setShowAxes(e.target.checked)}
-              className="rounded bg-gray-50 border-gray-300 text-blue-500 focus:ring-blue-500"
-            />
-            <span className="text-sm text-gray-700">Show Axes</span>
-          </label>
+        <div className="space-y-1">
+          <ToggleRow
+            label="Atom Labels"
+            checked={showLabels}
+            onChange={setShowLabels}
+          />
+          <ToggleRow
+            label="Bond Lengths"
+            checked={showBondInfo}
+            onChange={setShowBondInfo}
+          />
+          <ToggleRow
+            label="Axes"
+            checked={showAxes}
+            onChange={setShowAxes}
+          />
         </div>
       </div>
     </div>
+  );
+}
+
+function ToggleRow({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer hover:bg-surface-container transition-colors">
+      <span className="text-sm text-on-surface">{label}</span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={`relative w-10 h-6 rounded-full transition-colors ${
+          checked ? 'bg-primary' : 'bg-outline'
+        }`}
+      >
+        <span
+          className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+            checked ? 'translate-x-5' : 'translate-x-1'
+          }`}
+        />
+      </button>
+    </label>
   );
 }

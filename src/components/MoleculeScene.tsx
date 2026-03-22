@@ -37,7 +37,7 @@ function DashedBond({ start, end }: { start: [number, number, number]; end: [num
 
 function SceneBackground() {
   const { scene } = useThree();
-  scene.background = new THREE.Color('#f0f2f5');
+  scene.background = new THREE.Color('#f1f3f6');
   return null;
 }
 
@@ -153,7 +153,7 @@ export function MoleculeScene() {
       <Canvas
         camera={{ position: [5, 5, 5], fov: 50 }}
         gl={{ antialias: true, alpha: false }}
-        style={{ background: '#f8f9fa' }}
+        style={{ background: '#f1f3f6' }}
       >
         <SceneContent />
       </Canvas>
