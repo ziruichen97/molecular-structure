@@ -51,6 +51,9 @@ interface MoleculeState {
   deleteSelected: () => void;
 
   loadTemplate: (template: MoleculeTemplate) => void;
+  saveAsTemplate: (name: string) => void;
+  deleteCustomTemplate: (name: string) => void;
+  getCustomTemplates: () => MoleculeTemplate[];
   clearAll: () => void;
 
   undo: () => void;
@@ -278,6 +281,51 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
       selectedBondIds: [],
     }));
     get().pushHistory(`Load template: ${template.name}`);
+  },
+
+  saveAsTemplate: (name) => {
+    const { atoms, bonds, getMolecularFormula } = get();
+    if (atoms.length === 0) return;
+
+    const atomIndexMap = new Map<string, number>();
+    atoms.forEach((a, i) => atomIndexMap.set(a.id, i));
+
+    const template: MoleculeTemplate = {
+      name,
+      nameCN: name,
+      formula: getMolecularFormula(),
+      description: `Custom template: ${name}`,
+      atoms: atoms.map(a => ({
+        element: a.element,
+        position: { ...a.position },
+        chirality: a.chirality,
+        charge: a.charge,
+      })),
+      bonds: bonds.map(b => ({
+        atomIndex1: atomIndexMap.get(b.atomId1) ?? 0,
+        atomIndex2: atomIndexMap.get(b.atomId2) ?? 0,
+        type: b.type,
+        cisTransConfig: b.cisTransConfig,
+      })),
+    };
+
+    const saved: MoleculeTemplate[] = JSON.parse(
+      localStorage.getItem('molbuilder_custom_templates') || '[]'
+    );
+    saved.push(template);
+    localStorage.setItem('molbuilder_custom_templates', JSON.stringify(saved));
+  },
+
+  deleteCustomTemplate: (name) => {
+    const saved: MoleculeTemplate[] = JSON.parse(
+      localStorage.getItem('molbuilder_custom_templates') || '[]'
+    );
+    const updated = saved.filter(t => t.name !== name);
+    localStorage.setItem('molbuilder_custom_templates', JSON.stringify(updated));
+  },
+
+  getCustomTemplates: () => {
+    return JSON.parse(localStorage.getItem('molbuilder_custom_templates') || '[]');
   },
 
   clearAll: () => {
