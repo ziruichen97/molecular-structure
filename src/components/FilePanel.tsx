@@ -3,7 +3,7 @@ import { useMoleculeStore } from '../store/useMoleculeStore';
 
 export function FilePanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { exportMOL, exportJSON, importJSON, atoms } = useMoleculeStore();
+  const { exportMOL, exportJSON, importJSON, importMOL, atoms } = useMoleculeStore();
 
   const handleExportMOL = () => {
     const content = exportMOL();
@@ -33,6 +33,8 @@ export function FilePanel() {
       const content = ev.target?.result as string;
       if (file.name.endsWith('.json')) {
         importJSON(content);
+      } else if (file.name.endsWith('.mol') || file.name.endsWith('.sdf')) {
+        importMOL(content);
       }
     };
     reader.readAsText(file);
@@ -46,7 +48,6 @@ export function FilePanel() {
     const saves = JSON.parse(localStorage.getItem('molbuilder_saves') || '[]');
     saves.push({ key, name: useMoleculeStore.getState().moleculeName, date: new Date().toISOString() });
     localStorage.setItem('molbuilder_saves', JSON.stringify(saves));
-    alert('已保存到本地存储');
   };
 
   return (
@@ -54,14 +55,14 @@ export function FilePanel() {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".json"
+        accept=".json,.mol,.sdf"
         onChange={handleFileChange}
         className="hidden"
       />
 
       <div>
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          文件操作
+          File Operations
         </h3>
         <div className="space-y-1.5">
           <button
@@ -69,42 +70,42 @@ export function FilePanel() {
             disabled={atoms.length === 0}
             className="w-full px-3 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            💾 保存到本地
+            💾 Save to Local
           </button>
           <button
             onClick={handleImport}
-            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-300 text-sm hover:bg-gray-600 border border-gray-600 transition-colors"
+            className="w-full px-3 py-2 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 border border-gray-200 transition-colors"
           >
-            📂 导入 JSON
+            📂 Import (JSON / MOL / SDF)
           </button>
         </div>
       </div>
 
       <div>
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          导出格式
+          Export Format
         </h3>
         <div className="space-y-1.5">
           <button
             onClick={handleExportJSON}
             disabled={atoms.length === 0}
-            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-300 text-sm hover:bg-gray-600 border border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-3 py-2 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            📄 导出 JSON
+            📄 Export JSON
           </button>
           <button
             onClick={handleExportMOL}
             disabled={atoms.length === 0}
-            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-300 text-sm hover:bg-gray-600 border border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-3 py-2 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            🧪 导出 MOL (V2000)
+            🧪 Export MOL (V2000)
           </button>
           <button
             onClick={handleExportSDF}
             disabled={atoms.length === 0}
-            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-300 text-sm hover:bg-gray-600 border border-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-3 py-2 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            📋 导出 SDF
+            📋 Export SDF
           </button>
         </div>
       </div>
@@ -137,32 +138,32 @@ function LocalSaves() {
   return (
     <div>
       <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-        本地存储
+        Local Storage
       </h3>
       <div className="space-y-1 max-h-40 overflow-y-auto">
         {saves.slice().reverse().map(save => (
           <div
             key={save.key}
-            className="flex items-center justify-between px-2 py-1.5 rounded bg-gray-700/50 border border-gray-600 text-xs"
+            className="flex items-center justify-between px-2 py-1.5 rounded bg-gray-50 border border-gray-200 text-xs"
           >
             <div className="truncate flex-1 mr-2">
-              <span className="text-gray-300">{save.name}</span>
-              <span className="text-gray-500 ml-1">
+              <span className="text-gray-700">{save.name}</span>
+              <span className="text-gray-400 ml-1">
                 {new Date(save.date).toLocaleDateString()}
               </span>
             </div>
             <div className="flex gap-1">
               <button
                 onClick={() => handleLoad(save.key)}
-                className="px-1.5 py-0.5 rounded bg-blue-600/50 text-blue-300 hover:bg-blue-600"
+                className="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200"
               >
-                加载
+                Load
               </button>
               <button
                 onClick={() => handleDelete(save.key)}
-                className="px-1.5 py-0.5 rounded bg-red-600/50 text-red-300 hover:bg-red-600"
+                className="px-1.5 py-0.5 rounded bg-red-100 text-red-700 hover:bg-red-200"
               >
-                删
+                Del
               </button>
             </div>
           </div>

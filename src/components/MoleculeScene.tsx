@@ -1,10 +1,45 @@
 import { useCallback, useRef } from 'react';
-import { Canvas, ThreeEvent } from '@react-three/fiber';
-import { OrbitControls, Grid, GizmoHelper, GizmoViewport } from '@react-three/drei';
+import { Canvas, ThreeEvent, useThree } from '@react-three/fiber';
+import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Sphere, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { useMoleculeStore } from '../store/useMoleculeStore';
 import { AtomSphere } from './AtomSphere';
 import { BondStick } from './BondStick';
+
+function GhostAtom({ position }: { position: [number, number, number] }) {
+  return (
+    <Sphere args={[0.18, 16, 16]} position={position}>
+      <meshStandardMaterial
+        color="#999999"
+        transparent
+        opacity={0.35}
+        metalness={0.1}
+        roughness={0.5}
+      />
+    </Sphere>
+  );
+}
+
+function DashedBond({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
+  return (
+    <Line
+      points={[start, end]}
+      color="#999999"
+      lineWidth={1.5}
+      dashed
+      dashSize={0.1}
+      gapSize={0.08}
+      transparent
+      opacity={0.5}
+    />
+  );
+}
+
+function SceneBackground() {
+  const { scene } = useThree();
+  scene.background = new THREE.Color('#f0f2f5');
+  return null;
+}
 
 function SceneContent() {
   const {
@@ -13,6 +48,7 @@ function SceneContent() {
     toolMode,
     selectedElement,
     showAxes,
+    isomerPositions,
     addAtom,
     clearSelection,
   } = useMoleculeStore();
@@ -36,6 +72,7 @@ function SceneContent() {
 
   return (
     <>
+      <SceneBackground />
       <ambientLight intensity={0.6} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
       <directionalLight position={[-10, -10, -5]} intensity={0.3} />
@@ -55,10 +92,10 @@ function SceneContent() {
         args={[20, 20]}
         cellSize={0.5}
         cellThickness={0.5}
-        cellColor="#404040"
+        cellColor="#d0d0d0"
         sectionSize={2}
         sectionThickness={1}
-        sectionColor="#606060"
+        sectionColor="#b0b0b0"
         fadeDistance={30}
         fadeStrength={1}
         followCamera={false}
@@ -72,6 +109,20 @@ function SceneContent() {
       {bonds.map(bond => (
         <BondStick key={bond.id} bond={bond} />
       ))}
+
+      {isomerPositions.map((isomer, iIdx) => {
+        const sourceAtom = atoms.find(a => a.id === isomer.atomId);
+        if (!sourceAtom) return null;
+        return isomer.positions.map((pos, pIdx) => (
+          <group key={`isomer-${iIdx}-${pIdx}`}>
+            <GhostAtom position={[pos.x, pos.y, pos.z]} />
+            <DashedBond
+              start={[sourceAtom.position.x, sourceAtom.position.y, sourceAtom.position.z]}
+              end={[pos.x, pos.y, pos.z]}
+            />
+          </group>
+        ));
+      })}
 
       {showAxes && (
         <GizmoHelper alignment="bottom-left" margin={[60, 60]}>
@@ -102,7 +153,7 @@ export function MoleculeScene() {
       <Canvas
         camera={{ position: [5, 5, 5], fov: 50 }}
         gl={{ antialias: true, alpha: false }}
-        style={{ background: '#1a1a2e' }}
+        style={{ background: '#f8f9fa' }}
       >
         <SceneContent />
       </Canvas>

@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import type { Atom, Bond, BondType, ToolMode, HistoryEntry, MoleculeTemplate, Vec3 } from '../types/chemistry';
 import { ELEMENTS } from '../data/elements';
+import { parseMOLV2000, is2DStructure, convert2Dto3D } from '../utils/molParser';
+import { applyForceDirectedLayout, generateIsomerPositions, type IsomerPosition } from '../utils/forceLayout';
 
 interface MoleculeState {
   atoms: Atom[];
@@ -23,6 +25,8 @@ interface MoleculeState {
   showAxes: boolean;
 
   moleculeName: string;
+
+  isomerPositions: IsomerPosition[];
 
   setToolMode: (mode: ToolMode) => void;
   setSelectedElement: (element: string) => void;
@@ -50,6 +54,10 @@ interface MoleculeState {
   deleteSelected: () => void;
 
   loadTemplate: (template: MoleculeTemplate) => void;
+  saveAsTemplate: (name: string) => void;
+  deleteCustomTemplate: (name: string) => void;
+  getCustomTemplates: () => MoleculeTemplate[];
+  optimizeLayout: () => void;
   clearAll: () => void;
 
   undo: () => void;
@@ -59,6 +67,7 @@ interface MoleculeState {
   exportMOL: () => string;
   exportJSON: () => string;
   importJSON: (json: string) => void;
+  importMOL: (content: string) => boolean;
 
   getMolecularWeight: () => number;
   getMolecularFormula: () => string;
@@ -90,6 +99,7 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
   showBondInfo: false,
   showAxes: true,
   moleculeName: 'Untitled Molecule',
+  isomerPositions: [],
 
   setToolMode: (mode) => set({ toolMode: mode, selectedAtomIds: [], selectedBondIds: [] }),
   setSelectedElement: (element) => set({ selectedElement: element }),
@@ -237,11 +247,30 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
   },
 
   loadTemplate: (template) => {
+    const state = get();
     const atomIds: string[] = [];
+
+    let offsetX = 0;
+    if (state.atoms.length > 0) {
+      let maxX = -Infinity;
+      let minTemplateX = Infinity;
+      for (const a of state.atoms) {
+        if (a.position.x > maxX) maxX = a.position.x;
+      }
+      for (const a of template.atoms) {
+        if (a.position.x < minTemplateX) minTemplateX = a.position.x;
+      }
+      offsetX = maxX - minTemplateX + 3;
+    }
+
     const newAtoms: Atom[] = template.atoms.map((a) => {
       const id = uuidv4();
       atomIds.push(id);
-      return { ...a, id, position: { ...a.position } };
+      return {
+        ...a,
+        id,
+        position: { x: a.position.x + offsetX, y: a.position.y, z: a.position.z },
+      };
     });
     const newBonds: Bond[] = template.bonds.map((b) => ({
       id: uuidv4(),
@@ -250,12 +279,78 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
       type: b.type,
       cisTransConfig: b.cisTransConfig,
     }));
-    set({ atoms: newAtoms, bonds: newBonds, selectedAtomIds: [], selectedBondIds: [] });
+    set((s) => ({
+      atoms: [...s.atoms, ...newAtoms],
+      bonds: [...s.bonds, ...newBonds],
+      selectedAtomIds: [],
+      selectedBondIds: [],
+    }));
     get().pushHistory(`Load template: ${template.name}`);
   },
 
+  saveAsTemplate: (name) => {
+    const { atoms, bonds, getMolecularFormula } = get();
+    if (atoms.length === 0) return;
+
+    const atomIndexMap = new Map<string, number>();
+    atoms.forEach((a, i) => atomIndexMap.set(a.id, i));
+
+    const template: MoleculeTemplate = {
+      name,
+      nameCN: name,
+      formula: getMolecularFormula(),
+      description: `Custom template: ${name}`,
+      atoms: atoms.map(a => ({
+        element: a.element,
+        position: { ...a.position },
+        chirality: a.chirality,
+        charge: a.charge,
+      })),
+      bonds: bonds.map(b => ({
+        atomIndex1: atomIndexMap.get(b.atomId1) ?? 0,
+        atomIndex2: atomIndexMap.get(b.atomId2) ?? 0,
+        type: b.type,
+        cisTransConfig: b.cisTransConfig,
+      })),
+    };
+
+    const saved: MoleculeTemplate[] = JSON.parse(
+      localStorage.getItem('molbuilder_custom_templates') || '[]'
+    );
+    saved.push(template);
+    localStorage.setItem('molbuilder_custom_templates', JSON.stringify(saved));
+  },
+
+  deleteCustomTemplate: (name) => {
+    const saved: MoleculeTemplate[] = JSON.parse(
+      localStorage.getItem('molbuilder_custom_templates') || '[]'
+    );
+    const updated = saved.filter(t => t.name !== name);
+    localStorage.setItem('molbuilder_custom_templates', JSON.stringify(updated));
+  },
+
+  getCustomTemplates: () => {
+    return JSON.parse(localStorage.getItem('molbuilder_custom_templates') || '[]');
+  },
+
+  optimizeLayout: () => {
+    const { atoms, bonds } = get();
+    if (atoms.length === 0) return;
+
+    const optimized = applyForceDirectedLayout(atoms, bonds);
+    const isomers = generateIsomerPositions(optimized, bonds);
+
+    set({
+      atoms: optimized,
+      isomerPositions: isomers,
+      selectedAtomIds: [],
+      selectedBondIds: [],
+    });
+    get().pushHistory('Optimize layout');
+  },
+
   clearAll: () => {
-    set({ atoms: [], bonds: [], selectedAtomIds: [], selectedBondIds: [] });
+    set({ atoms: [], bonds: [], selectedAtomIds: [], selectedBondIds: [], isomerPositions: [] });
     get().pushHistory('Clear all');
   },
 
@@ -353,6 +448,46 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
     } catch {
       console.error('Failed to import JSON');
     }
+  },
+
+  importMOL: (content) => {
+    const parsed = parseMOLV2000(content);
+    if (!parsed) return false;
+
+    let { atoms: newAtoms } = parsed;
+    const { bonds: newBonds, name } = parsed;
+
+    if (is2DStructure(newAtoms)) {
+      newAtoms = convert2Dto3D(newAtoms, newBonds);
+    }
+
+    const state = get();
+    let offsetX = 0;
+    if (state.atoms.length > 0) {
+      let maxX = -Infinity;
+      let minNewX = Infinity;
+      for (const a of state.atoms) {
+        if (a.position.x > maxX) maxX = a.position.x;
+      }
+      for (const a of newAtoms) {
+        if (a.position.x < minNewX) minNewX = a.position.x;
+      }
+      offsetX = maxX - minNewX + 3;
+      newAtoms = newAtoms.map(a => ({
+        ...a,
+        position: { x: a.position.x + offsetX, y: a.position.y, z: a.position.z },
+      }));
+    }
+
+    set((s) => ({
+      atoms: [...s.atoms, ...newAtoms],
+      bonds: [...s.bonds, ...newBonds],
+      moleculeName: name,
+      selectedAtomIds: [],
+      selectedBondIds: [],
+    }));
+    get().pushHistory('Import MOL file (2D→3D)');
+    return true;
   },
 
   getMolecularWeight: () => {

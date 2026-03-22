@@ -58,26 +58,26 @@ export function PropertiesPanel() {
     <div className="p-3 space-y-4">
       <div>
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          分子信息
+          Molecule Info
         </h3>
         <div className="space-y-1 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-400">分子式:</span>
-            <span className="text-gray-200 font-mono">{formula || '—'}</span>
+            <span className="text-gray-500">Formula:</span>
+            <span className="text-gray-800 font-mono">{formula || '—'}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">分子量:</span>
-            <span className="text-gray-200 font-mono">
+            <span className="text-gray-500">Weight:</span>
+            <span className="text-gray-800 font-mono">
               {atoms.length > 0 ? `${molecularWeight.toFixed(3)} g/mol` : '—'}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">原子数:</span>
-            <span className="text-gray-200">{atoms.length}</span>
+            <span className="text-gray-500">Atoms:</span>
+            <span className="text-gray-800">{atoms.length}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">化学键数:</span>
-            <span className="text-gray-200">{bonds.length}</span>
+            <span className="text-gray-500">Bonds:</span>
+            <span className="text-gray-800">{bonds.length}</span>
           </div>
         </div>
       </div>
@@ -85,46 +85,46 @@ export function PropertiesPanel() {
       {selectedAtom && (
         <div>
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-            原子属性
+            Atom Properties
           </h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">元素:</span>
-              <span className="text-gray-200 font-bold">
-                {selectedAtom.element} ({ELEMENTS[selectedAtom.element]?.nameCN})
+              <span className="text-gray-500">Element:</span>
+              <span className="text-gray-800 font-bold">
+                {selectedAtom.element} ({ELEMENTS[selectedAtom.element]?.name})
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">位置:</span>
-              <span className="text-gray-200 font-mono text-xs">
+              <span className="text-gray-500">Position:</span>
+              <span className="text-gray-800 font-mono text-xs">
                 ({selectedAtom.position.x.toFixed(2)}, {selectedAtom.position.y.toFixed(2)}, {selectedAtom.position.z.toFixed(2)})
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">手性:</span>
+              <span className="text-gray-500">Chirality:</span>
               <select
                 value={selectedAtom.chirality}
                 onChange={(e) => updateAtomChirality(selectedAtom.id, e.target.value as 'none' | 'R' | 'S')}
-                className="bg-gray-700 text-gray-200 rounded px-2 py-0.5 text-xs border border-gray-600"
+                className="bg-gray-50 text-gray-800 rounded px-2 py-0.5 text-xs border border-gray-200"
               >
-                <option value="none">无</option>
+                <option value="none">None</option>
                 <option value="R">R</option>
                 <option value="S">S</option>
               </select>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">电荷:</span>
+              <span className="text-gray-500">Charge:</span>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => updateAtomCharge(selectedAtom.id, selectedAtom.charge - 1)}
-                  className="w-5 h-5 rounded bg-gray-700 text-gray-300 text-xs hover:bg-gray-600 flex items-center justify-center"
+                  className="w-5 h-5 rounded bg-gray-100 text-gray-700 text-xs hover:bg-gray-200 flex items-center justify-center"
                 >
                   −
                 </button>
-                <span className="text-gray-200 w-6 text-center">{selectedAtom.charge}</span>
+                <span className="text-gray-800 w-6 text-center">{selectedAtom.charge}</span>
                 <button
                   onClick={() => updateAtomCharge(selectedAtom.id, selectedAtom.charge + 1)}
-                  className="w-5 h-5 rounded bg-gray-700 text-gray-300 text-xs hover:bg-gray-600 flex items-center justify-center"
+                  className="w-5 h-5 rounded bg-gray-100 text-gray-700 text-xs hover:bg-gray-200 flex items-center justify-center"
                 >
                   +
                 </button>
@@ -132,13 +132,13 @@ export function PropertiesPanel() {
             </div>
             {bondAngles.length > 0 && (
               <div>
-                <span className="text-gray-400 text-xs">键角:</span>
+                <span className="text-gray-500 text-xs">Bond Angles:</span>
                 {bondAngles.map((angle, i) => (
                   <div key={i} className="flex justify-between ml-2 text-xs">
-                    <span className="text-gray-500">
+                    <span className="text-gray-400">
                       {angle.atom1}-{selectedAtom.element}-{angle.atom2}
                     </span>
-                    <span className="text-gray-300 font-mono">{angle.angle.toFixed(1)}°</span>
+                    <span className="text-gray-700 font-mono">{angle.angle.toFixed(1)}°</span>
                   </div>
                 ))}
               </div>
@@ -155,28 +155,28 @@ export function PropertiesPanel() {
         return (
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              化学键属性
+              Bond Properties
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-400">连接:</span>
-                <span className="text-gray-200">{a1.element} — {a2.element}</span>
+                <span className="text-gray-500">Connection:</span>
+                <span className="text-gray-800">{a1.element} — {a2.element}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">键长:</span>
-                <span className="text-gray-200 font-mono">{bondLength.toFixed(3)} Å</span>
+                <span className="text-gray-500">Length:</span>
+                <span className="text-gray-800 font-mono">{bondLength.toFixed(3)} Å</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-400">键型:</span>
+                <span className="text-gray-500">Type:</span>
                 <select
                   value={selectedBond.type}
                   onChange={(e) => updateBondType(selectedBond.id, e.target.value as 'single' | 'double' | 'triple' | 'aromatic')}
-                  className="bg-gray-700 text-gray-200 rounded px-2 py-0.5 text-xs border border-gray-600"
+                  className="bg-gray-50 text-gray-800 rounded px-2 py-0.5 text-xs border border-gray-200"
                 >
-                  <option value="single">单键</option>
-                  <option value="double">双键</option>
-                  <option value="triple">三键</option>
-                  <option value="aromatic">芳香键</option>
+                  <option value="single">Single</option>
+                  <option value="double">Double</option>
+                  <option value="triple">Triple</option>
+                  <option value="aromatic">Aromatic</option>
                 </select>
               </div>
             </div>

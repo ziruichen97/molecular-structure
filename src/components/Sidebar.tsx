@@ -8,27 +8,27 @@ import { FilePanel } from './FilePanel';
 type Tab = 'elements' | 'templates' | 'properties' | 'settings' | 'file';
 
 const tabs: { id: Tab; label: string; icon: string }[] = [
-  { id: 'elements', label: '元素', icon: '⚛' },
-  { id: 'templates', label: '模板', icon: '📦' },
-  { id: 'properties', label: '属性', icon: '📊' },
-  { id: 'file', label: '文件', icon: '💾' },
-  { id: 'settings', label: '设置', icon: '⚙' },
+  { id: 'elements', label: 'Elements', icon: '⚛' },
+  { id: 'templates', label: 'Templates', icon: '📦' },
+  { id: 'properties', label: 'Properties', icon: '📊' },
+  { id: 'file', label: 'File', icon: '💾' },
+  { id: 'settings', label: 'Settings', icon: '⚙' },
 ];
 
 export function Sidebar() {
   const [activeTab, setActiveTab] = useState<Tab>('elements');
 
   return (
-    <div className="w-64 bg-gray-800 border-l border-gray-700 flex flex-col h-full">
-      <div className="flex border-b border-gray-700">
+    <div className="w-64 bg-white border-l border-gray-200 flex flex-col h-full">
+      <div className="flex border-b border-gray-200">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 px-1 py-2 text-xs transition-colors ${
               activeTab === tab.id
-                ? 'bg-gray-700 text-white border-b-2 border-blue-500'
-                : 'text-gray-400 hover:text-gray-300 hover:bg-gray-750'
+                ? 'bg-gray-100 text-gray-900 border-b-2 border-blue-500'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
             }`}
             title={tab.label}
           >
