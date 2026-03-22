@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import type { Atom, Bond, BondType, ToolMode, HistoryEntry, MoleculeTemplate, Vec3 } from '../types/chemistry';
 import { ELEMENTS } from '../data/elements';
+import { parseMOLV2000, is2DStructure, convert2Dto3D } from '../utils/molParser';
 
 interface MoleculeState {
   atoms: Atom[];
@@ -59,6 +60,7 @@ interface MoleculeState {
   exportMOL: () => string;
   exportJSON: () => string;
   importJSON: (json: string) => void;
+  importMOL: (content: string) => boolean;
 
   getMolecularWeight: () => number;
   getMolecularFormula: () => string;
@@ -377,6 +379,46 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
     } catch {
       console.error('Failed to import JSON');
     }
+  },
+
+  importMOL: (content) => {
+    const parsed = parseMOLV2000(content);
+    if (!parsed) return false;
+
+    let { atoms: newAtoms } = parsed;
+    const { bonds: newBonds, name } = parsed;
+
+    if (is2DStructure(newAtoms)) {
+      newAtoms = convert2Dto3D(newAtoms, newBonds);
+    }
+
+    const state = get();
+    let offsetX = 0;
+    if (state.atoms.length > 0) {
+      let maxX = -Infinity;
+      let minNewX = Infinity;
+      for (const a of state.atoms) {
+        if (a.position.x > maxX) maxX = a.position.x;
+      }
+      for (const a of newAtoms) {
+        if (a.position.x < minNewX) minNewX = a.position.x;
+      }
+      offsetX = maxX - minNewX + 3;
+      newAtoms = newAtoms.map(a => ({
+        ...a,
+        position: { x: a.position.x + offsetX, y: a.position.y, z: a.position.z },
+      }));
+    }
+
+    set((s) => ({
+      atoms: [...s.atoms, ...newAtoms],
+      bonds: [...s.bonds, ...newBonds],
+      moleculeName: name,
+      selectedAtomIds: [],
+      selectedBondIds: [],
+    }));
+    get().pushHistory('Import MOL file (2D→3D)');
+    return true;
   },
 
   getMolecularWeight: () => {

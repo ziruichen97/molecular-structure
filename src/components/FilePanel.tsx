@@ -3,7 +3,7 @@ import { useMoleculeStore } from '../store/useMoleculeStore';
 
 export function FilePanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { exportMOL, exportJSON, importJSON, atoms } = useMoleculeStore();
+  const { exportMOL, exportJSON, importJSON, importMOL, atoms } = useMoleculeStore();
 
   const handleExportMOL = () => {
     const content = exportMOL();
@@ -33,6 +33,8 @@ export function FilePanel() {
       const content = ev.target?.result as string;
       if (file.name.endsWith('.json')) {
         importJSON(content);
+      } else if (file.name.endsWith('.mol') || file.name.endsWith('.sdf')) {
+        importMOL(content);
       }
     };
     reader.readAsText(file);
@@ -53,7 +55,7 @@ export function FilePanel() {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".json"
+        accept=".json,.mol,.sdf"
         onChange={handleFileChange}
         className="hidden"
       />
@@ -74,7 +76,7 @@ export function FilePanel() {
             onClick={handleImport}
             className="w-full px-3 py-2 rounded bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 border border-gray-200 transition-colors"
           >
-            📂 Import JSON
+            📂 Import (JSON / MOL / SDF)
           </button>
         </div>
       </div>
