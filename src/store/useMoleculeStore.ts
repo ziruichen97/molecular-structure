@@ -237,11 +237,30 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
   },
 
   loadTemplate: (template) => {
+    const state = get();
     const atomIds: string[] = [];
+
+    let offsetX = 0;
+    if (state.atoms.length > 0) {
+      let maxX = -Infinity;
+      let minTemplateX = Infinity;
+      for (const a of state.atoms) {
+        if (a.position.x > maxX) maxX = a.position.x;
+      }
+      for (const a of template.atoms) {
+        if (a.position.x < minTemplateX) minTemplateX = a.position.x;
+      }
+      offsetX = maxX - minTemplateX + 3;
+    }
+
     const newAtoms: Atom[] = template.atoms.map((a) => {
       const id = uuidv4();
       atomIds.push(id);
-      return { ...a, id, position: { ...a.position } };
+      return {
+        ...a,
+        id,
+        position: { x: a.position.x + offsetX, y: a.position.y, z: a.position.z },
+      };
     });
     const newBonds: Bond[] = template.bonds.map((b) => ({
       id: uuidv4(),
@@ -250,7 +269,12 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
       type: b.type,
       cisTransConfig: b.cisTransConfig,
     }));
-    set({ atoms: newAtoms, bonds: newBonds, selectedAtomIds: [], selectedBondIds: [] });
+    set((s) => ({
+      atoms: [...s.atoms, ...newAtoms],
+      bonds: [...s.bonds, ...newBonds],
+      selectedAtomIds: [],
+      selectedBondIds: [],
+    }));
     get().pushHistory(`Load template: ${template.name}`);
   },
 
