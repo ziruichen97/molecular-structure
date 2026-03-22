@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, memo } from 'react';
 import { Html } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -12,6 +12,18 @@ interface BondStickProps {
 
 const BOND_RADIUS = 0.06;
 const BOND_GAP = 0.15;
+
+const cylinderGeometryCache = new Map<string, THREE.CylinderGeometry>();
+
+function getSharedCylinderGeometry(radius: number, length: number): THREE.CylinderGeometry {
+  const key = `${Math.round(radius * 1000)}_${Math.round(length * 1000)}`;
+  let geo = cylinderGeometryCache.get(key);
+  if (!geo) {
+    geo = new THREE.CylinderGeometry(radius, radius, length, 8);
+    cylinderGeometryCache.set(key, geo);
+  }
+  return geo;
+}
 
 function SingleBond({ start, end, color, onPointerDown, onPointerEnter, onPointerLeave }: {
   start: THREE.Vector3;
@@ -34,33 +46,33 @@ function SingleBond({ start, end, color, onPointerDown, onPointerEnter, onPointe
     return { position: mid, quaternion: quat, length: len };
   }, [start, end]);
 
+  const geometry = useMemo(() => getSharedCylinderGeometry(BOND_RADIUS, length), [length]);
+
   return (
     <mesh
       ref={meshRef}
       position={position}
       quaternion={quaternion}
+      geometry={geometry}
       onPointerDown={onPointerDown}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
     >
-      <cylinderGeometry args={[BOND_RADIUS, BOND_RADIUS, length, 8]} />
       <meshStandardMaterial color={color} metalness={0.2} roughness={0.4} />
     </mesh>
   );
 }
 
-export function BondStick({ bond }: BondStickProps) {
-  const {
-    atoms,
-    selectedBondIds,
-    hoveredBondId,
-    toolMode,
-    showBondInfo,
-    selectBond,
-    removeBond,
-    setHoveredBondId,
-    updateBondType,
-  } = useMoleculeStore();
+export const BondStick = memo(function BondStick({ bond }: BondStickProps) {
+  const atoms = useMoleculeStore(s => s.atoms);
+  const selectedBondIds = useMoleculeStore(s => s.selectedBondIds);
+  const hoveredBondId = useMoleculeStore(s => s.hoveredBondId);
+  const toolMode = useMoleculeStore(s => s.toolMode);
+  const showBondInfo = useMoleculeStore(s => s.showBondInfo);
+  const selectBond = useMoleculeStore(s => s.selectBond);
+  const removeBond = useMoleculeStore(s => s.removeBond);
+  const setHoveredBondId = useMoleculeStore(s => s.setHoveredBondId);
+  const updateBondType = useMoleculeStore(s => s.updateBondType);
 
   const atom1 = atoms.find((a: Atom) => a.id === bond.atomId1);
   const atom2 = atoms.find((a: Atom) => a.id === bond.atomId2);
@@ -181,4 +193,4 @@ export function BondStick({ bond }: BondStickProps) {
       )}
     </group>
   );
-}
+});

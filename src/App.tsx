@@ -5,11 +5,16 @@ import { Sidebar } from './components/Sidebar';
 import { StatusBar } from './components/StatusBar';
 import { useMoleculeStore } from './store/useMoleculeStore';
 
+const TOOL_MODES = ['select', 'addAtom', 'addBond', 'move', 'delete'] as const;
+
 export default function App() {
-  const { undo, redo, deleteSelected } = useMoleculeStore();
+  const { undo, redo, deleteSelected, setToolMode, clearSelection, selectAll } = useMoleculeStore();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInputFocused = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
       if (e.ctrlKey || e.metaKey) {
         if (e.key === 'z' && !e.shiftKey) {
           e.preventDefault();
@@ -19,19 +24,32 @@ export default function App() {
           e.preventDefault();
           redo();
         }
-      }
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        const tag = (e.target as HTMLElement)?.tagName;
-        if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+        if (e.key === 'a' && !isInputFocused) {
           e.preventDefault();
-          deleteSelected();
+          selectAll();
         }
+      }
+
+      if (isInputFocused) return;
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        deleteSelected();
+      }
+
+      if (e.key === 'Escape') {
+        clearSelection();
+      }
+
+      const toolIndex = parseInt(e.key) - 1;
+      if (toolIndex >= 0 && toolIndex < TOOL_MODES.length && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        setToolMode(TOOL_MODES[toolIndex]);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, deleteSelected]);
+  }, [undo, redo, deleteSelected, setToolMode, clearSelection, selectAll]);
 
   return (
     <div className="h-screen w-screen flex flex-col bg-surface-dim text-on-surface overflow-hidden">

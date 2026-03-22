@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useMemo, memo } from 'react';
 import { Sphere, Html } from '@react-three/drei';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -10,24 +10,34 @@ interface AtomSphereProps {
   atom: Atom;
 }
 
-export function AtomSphere({ atom }: AtomSphereProps) {
+const sphereGeometryCache = new Map<number, THREE.SphereGeometry>();
+
+function getSharedSphereGeometry(radius: number): THREE.SphereGeometry {
+  const key = Math.round(radius * 1000);
+  let geo = sphereGeometryCache.get(key);
+  if (!geo) {
+    geo = new THREE.SphereGeometry(radius, 20, 20);
+    sphereGeometryCache.set(key, geo);
+  }
+  return geo;
+}
+
+export const AtomSphere = memo(function AtomSphere({ atom }: AtomSphereProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragPlane = useRef(new THREE.Plane());
   const dragOffset = useRef(new THREE.Vector3());
 
-  const {
-    toolMode,
-    selectedAtomIds,
-    hoveredAtomId,
-    showLabels,
-    selectAtom,
-    removeAtom,
-    moveAtom,
-    setHoveredAtomId,
-    addBond,
-    selectedBondType,
-  } = useMoleculeStore();
+  const toolMode = useMoleculeStore(s => s.toolMode);
+  const selectedAtomIds = useMoleculeStore(s => s.selectedAtomIds);
+  const hoveredAtomId = useMoleculeStore(s => s.hoveredAtomId);
+  const showLabels = useMoleculeStore(s => s.showLabels);
+  const selectAtom = useMoleculeStore(s => s.selectAtom);
+  const removeAtom = useMoleculeStore(s => s.removeAtom);
+  const moveAtom = useMoleculeStore(s => s.moveAtom);
+  const setHoveredAtomId = useMoleculeStore(s => s.setHoveredAtomId);
+  const addBond = useMoleculeStore(s => s.addBond);
+  const selectedBondType = useMoleculeStore(s => s.selectedBondType);
 
   const element = ELEMENTS[atom.element];
   const isSelected = selectedAtomIds.includes(atom.id);
@@ -42,10 +52,13 @@ export function AtomSphere({ atom }: AtomSphereProps) {
       : '#000000';
   const emissiveIntensity = isSelected ? 0.4 : isHovered ? 0.2 : 0;
 
+  const geometry = useMemo(() => getSharedSphereGeometry(radius), [radius]);
+
   useFrame(() => {
-    if (meshRef.current && isSelected) {
+    if (!meshRef.current) return;
+    if (isSelected) {
       meshRef.current.scale.setScalar(1 + Math.sin(Date.now() * 0.005) * 0.05);
-    } else if (meshRef.current) {
+    } else if (meshRef.current.scale.x !== 1) {
       meshRef.current.scale.setScalar(1);
     }
   });
@@ -108,25 +121,36 @@ export function AtomSphere({ atom }: AtomSphereProps) {
     }
   }, [isDragging]);
 
+  const handlePointerEnter = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    setHoveredAtomId(atom.id);
+  }, [atom.id, setHoveredAtomId]);
+
+  const handlePointerLeave = useCallback(() => {
+    setHoveredAtomId(null);
+  }, [setHoveredAtomId]);
+
+  const materialProps = useMemo(() => ({
+    color,
+    emissive: emissiveColor,
+    emissiveIntensity,
+    metalness: 0.1,
+    roughness: 0.3,
+  }), [color, emissiveColor, emissiveIntensity]);
+
   return (
     <group position={[atom.position.x, atom.position.y, atom.position.z]}>
-      <Sphere
+      <mesh
         ref={meshRef}
-        args={[radius, 32, 32]}
+        geometry={geometry}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerEnter={(e) => { e.stopPropagation(); setHoveredAtomId(atom.id); }}
-        onPointerLeave={() => setHoveredAtomId(null)}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
       >
-        <meshStandardMaterial
-          color={color}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
-          metalness={0.1}
-          roughness={0.3}
-        />
-      </Sphere>
+        <meshStandardMaterial {...materialProps} />
+      </mesh>
       {atom.chirality !== 'none' && (
         <Html
           position={[0, radius + 0.15, 0]}
@@ -160,4 +184,4 @@ export function AtomSphere({ atom }: AtomSphereProps) {
       )}
     </group>
   );
-}
+});
