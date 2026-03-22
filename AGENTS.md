@@ -19,4 +19,9 @@ See `package.json` scripts and `README.md` for standard commands:
 - **No lint/test scripts are configured.** The project has no ESLint, Prettier, or test framework set up. TypeScript type-checking (`npx tsc --noEmit`) is the primary static analysis available.
 - **No backend services required.** The app is entirely client-side; no databases, APIs, or Docker containers are needed.
 - **WebGL required.** The 3D rendering (Three.js / React Three Fiber) requires a browser with WebGL 2.0 support. Chrome in the Cloud VM works fine for manual testing.
-- **UI is in Chinese.** Toolbar labels, sidebar tabs, and status bar text are in Chinese. Keep this in mind when navigating the UI during manual testing.
+- **UI is in English.** All labels, tabs, tooltips, and status text use English.
+- **Three.js scene background** must be set via `scene.background` in a `useThree()` hook (not CSS) because the Canvas uses `alpha: false`.
+- **Template loading appends** to existing molecules (not replaces). Offset is auto-calculated along the X axis.
+- **Custom templates** are stored in `localStorage` under key `molbuilder_custom_templates`.
+- **MOL V2000 import** with automatic 2D-to-3D conversion is supported via the File panel.
+- **Force-directed layout** (`⚡ Optimize` button) uses repulsion, spring, and angle forces for geometry optimization.
