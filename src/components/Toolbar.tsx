@@ -19,6 +19,8 @@ export function Toolbar() {
     history,
     clearAll,
     deleteSelected,
+    optimizeLayout,
+    atoms,
     selectedAtomIds,
     selectedBondIds,
   } = useMoleculeStore();
@@ -61,6 +63,17 @@ export function Toolbar() {
           title="Redo (Ctrl+Y)"
         >
           ↪ Redo
+        </button>
+      </div>
+
+      <div className="flex items-center gap-1 border-r border-gray-200 pr-3 mr-1">
+        <button
+          onClick={optimizeLayout}
+          disabled={atoms.length === 0}
+          className="px-3 py-1.5 rounded text-sm bg-purple-600 text-white hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          title="Force-directed layout optimization: automatically optimizes atom positions using bond length and angle analysis"
+        >
+          ⚡ Optimize
         </button>
       </div>
 

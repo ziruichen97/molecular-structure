@@ -1,10 +1,39 @@
 import { useCallback, useRef } from 'react';
 import { Canvas, ThreeEvent } from '@react-three/fiber';
-import { OrbitControls, Grid, GizmoHelper, GizmoViewport } from '@react-three/drei';
+import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Sphere, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { useMoleculeStore } from '../store/useMoleculeStore';
 import { AtomSphere } from './AtomSphere';
 import { BondStick } from './BondStick';
+
+function GhostAtom({ position }: { position: [number, number, number] }) {
+  return (
+    <Sphere args={[0.18, 16, 16]} position={position}>
+      <meshStandardMaterial
+        color="#999999"
+        transparent
+        opacity={0.35}
+        metalness={0.1}
+        roughness={0.5}
+      />
+    </Sphere>
+  );
+}
+
+function DashedBond({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
+  return (
+    <Line
+      points={[start, end]}
+      color="#999999"
+      lineWidth={1.5}
+      dashed
+      dashSize={0.1}
+      gapSize={0.08}
+      transparent
+      opacity={0.5}
+    />
+  );
+}
 
 function SceneContent() {
   const {
@@ -13,6 +42,7 @@ function SceneContent() {
     toolMode,
     selectedElement,
     showAxes,
+    isomerPositions,
     addAtom,
     clearSelection,
   } = useMoleculeStore();
@@ -72,6 +102,20 @@ function SceneContent() {
       {bonds.map(bond => (
         <BondStick key={bond.id} bond={bond} />
       ))}
+
+      {isomerPositions.map((isomer, iIdx) => {
+        const sourceAtom = atoms.find(a => a.id === isomer.atomId);
+        if (!sourceAtom) return null;
+        return isomer.positions.map((pos, pIdx) => (
+          <group key={`isomer-${iIdx}-${pIdx}`}>
+            <GhostAtom position={[pos.x, pos.y, pos.z]} />
+            <DashedBond
+              start={[sourceAtom.position.x, sourceAtom.position.y, sourceAtom.position.z]}
+              end={[pos.x, pos.y, pos.z]}
+            />
+          </group>
+        ));
+      })}
 
       {showAxes && (
         <GizmoHelper alignment="bottom-left" margin={[60, 60]}>

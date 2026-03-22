@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Atom, Bond, BondType, ToolMode, HistoryEntry, MoleculeTemplate, Vec3 } from '../types/chemistry';
 import { ELEMENTS } from '../data/elements';
 import { parseMOLV2000, is2DStructure, convert2Dto3D } from '../utils/molParser';
+import { applyForceDirectedLayout, generateIsomerPositions, type IsomerPosition } from '../utils/forceLayout';
 
 interface MoleculeState {
   atoms: Atom[];
@@ -24,6 +25,8 @@ interface MoleculeState {
   showAxes: boolean;
 
   moleculeName: string;
+
+  isomerPositions: IsomerPosition[];
 
   setToolMode: (mode: ToolMode) => void;
   setSelectedElement: (element: string) => void;
@@ -54,6 +57,7 @@ interface MoleculeState {
   saveAsTemplate: (name: string) => void;
   deleteCustomTemplate: (name: string) => void;
   getCustomTemplates: () => MoleculeTemplate[];
+  optimizeLayout: () => void;
   clearAll: () => void;
 
   undo: () => void;
@@ -95,6 +99,7 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
   showBondInfo: false,
   showAxes: true,
   moleculeName: 'Untitled Molecule',
+  isomerPositions: [],
 
   setToolMode: (mode) => set({ toolMode: mode, selectedAtomIds: [], selectedBondIds: [] }),
   setSelectedElement: (element) => set({ selectedElement: element }),
@@ -328,8 +333,24 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
     return JSON.parse(localStorage.getItem('molbuilder_custom_templates') || '[]');
   },
 
+  optimizeLayout: () => {
+    const { atoms, bonds } = get();
+    if (atoms.length === 0) return;
+
+    const optimized = applyForceDirectedLayout(atoms, bonds);
+    const isomers = generateIsomerPositions(optimized, bonds);
+
+    set({
+      atoms: optimized,
+      isomerPositions: isomers,
+      selectedAtomIds: [],
+      selectedBondIds: [],
+    });
+    get().pushHistory('Optimize layout');
+  },
+
   clearAll: () => {
-    set({ atoms: [], bonds: [], selectedAtomIds: [], selectedBondIds: [] });
+    set({ atoms: [], bonds: [], selectedAtomIds: [], selectedBondIds: [], isomerPositions: [] });
     get().pushHistory('Clear all');
   },
 
