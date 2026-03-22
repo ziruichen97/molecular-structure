@@ -1,0 +1,260 @@
+import type { MoleculeTemplate } from '../types/chemistry';
+
+const T = Math.sqrt(8 / 9);
+const U = Math.sqrt(2 / 9);
+const V = Math.sqrt(2 / 3);
+
+export const MOLECULE_TEMPLATES: MoleculeTemplate[] = [
+  {
+    name: 'Methane',
+    nameCN: '甲烷',
+    formula: 'CH₄',
+    description: 'Simplest alkane, tetrahedral geometry',
+    atoms: [
+      { element: 'C', position: { x: 0, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.09, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.09 / 3, y: 1.09 * T, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.09 / 3, y: -1.09 * U, z: 1.09 * V }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.09 / 3, y: -1.09 * U, z: -1.09 * V }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 3, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 4, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Ethane',
+    nameCN: '乙烷',
+    formula: 'C₂H₆',
+    description: 'Two-carbon alkane',
+    atoms: [
+      { element: 'C', position: { x: -0.77, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'C', position: { x: 0.77, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.16, y: 1.01, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.16, y: -0.51, z: 0.88 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.16, y: -0.51, z: -0.88 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.16, y: -1.01, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.16, y: 0.51, z: -0.88 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.16, y: 0.51, z: 0.88 }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 3, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 4, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 5, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 6, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 7, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Ethylene',
+    nameCN: '乙烯',
+    formula: 'C₂H₄',
+    description: 'Simplest alkene with C=C double bond',
+    atoms: [
+      { element: 'C', position: { x: -0.67, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'C', position: { x: 0.67, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.24, y: 0.93, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.24, y: -0.93, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.24, y: 0.93, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.24, y: -0.93, z: 0 }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'double', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 3, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 4, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 5, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Acetylene',
+    nameCN: '乙炔',
+    formula: 'C₂H₂',
+    description: 'Simplest alkyne with C≡C triple bond',
+    atoms: [
+      { element: 'C', position: { x: -0.60, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'C', position: { x: 0.60, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.66, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.66, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'triple', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 3, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Benzene',
+    nameCN: '苯',
+    formula: 'C₆H₆',
+    description: 'Aromatic ring with delocalized electrons',
+    atoms: [
+      ...Array.from({ length: 6 }, (_, i) => ({
+        element: 'C',
+        position: {
+          x: 1.4 * Math.cos((i * Math.PI) / 3),
+          y: 1.4 * Math.sin((i * Math.PI) / 3),
+          z: 0,
+        },
+        chirality: 'none' as const,
+        charge: 0,
+      })),
+      ...Array.from({ length: 6 }, (_, i) => ({
+        element: 'H',
+        position: {
+          x: 2.48 * Math.cos((i * Math.PI) / 3),
+          y: 2.48 * Math.sin((i * Math.PI) / 3),
+          z: 0,
+        },
+        chirality: 'none' as const,
+        charge: 0,
+      })),
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'aromatic', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 2, type: 'aromatic', cisTransConfig: 'none' },
+      { atomIndex1: 2, atomIndex2: 3, type: 'aromatic', cisTransConfig: 'none' },
+      { atomIndex1: 3, atomIndex2: 4, type: 'aromatic', cisTransConfig: 'none' },
+      { atomIndex1: 4, atomIndex2: 5, type: 'aromatic', cisTransConfig: 'none' },
+      { atomIndex1: 5, atomIndex2: 0, type: 'aromatic', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 6, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 7, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 2, atomIndex2: 8, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 3, atomIndex2: 9, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 4, atomIndex2: 10, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 5, atomIndex2: 11, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Water',
+    nameCN: '水',
+    formula: 'H₂O',
+    description: 'Water molecule with bent geometry',
+    atoms: [
+      { element: 'O', position: { x: 0, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 0.76, y: 0.59, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -0.76, y: 0.59, z: 0 }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Ammonia',
+    nameCN: '氨',
+    formula: 'NH₃',
+    description: 'Nitrogen with three hydrogens, pyramidal shape',
+    atoms: [
+      { element: 'N', position: { x: 0, y: 0.38, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 0.94, y: -0.13, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -0.47, y: -0.13, z: 0.81 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -0.47, y: -0.13, z: -0.81 }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 3, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Methanol',
+    nameCN: '甲醇',
+    formula: 'CH₃OH',
+    description: 'Simplest alcohol',
+    atoms: [
+      { element: 'C', position: { x: -0.67, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'O', position: { x: 0.76, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 1.16, y: 0.87, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.06, y: 1.01, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.06, y: -0.51, z: 0.88 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -1.06, y: -0.51, z: -0.88 }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 1, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 3, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 4, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 5, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+  {
+    name: 'Cyclohexane',
+    nameCN: '环己烷',
+    formula: 'C₆H₁₂',
+    description: 'Six-membered ring in chair conformation',
+    atoms: [
+      ...Array.from({ length: 6 }, (_, i) => ({
+        element: 'C',
+        position: {
+          x: 1.53 * Math.cos((i * Math.PI) / 3),
+          y: i % 2 === 0 ? 0.25 : -0.25,
+          z: 1.53 * Math.sin((i * Math.PI) / 3),
+        },
+        chirality: 'none' as const,
+        charge: 0,
+      })),
+      ...Array.from({ length: 6 }, (_, i) => ({
+        element: 'H',
+        position: {
+          x: 2.17 * Math.cos((i * Math.PI) / 3),
+          y: i % 2 === 0 ? 1.34 : -1.34,
+          z: 2.17 * Math.sin((i * Math.PI) / 3),
+        },
+        chirality: 'none' as const,
+        charge: 0,
+      })),
+      ...Array.from({ length: 6 }, (_, i) => ({
+        element: 'H',
+        position: {
+          x: 2.17 * Math.cos((i * Math.PI) / 3 + 0.2),
+          y: i % 2 === 0 ? -0.34 : 0.34,
+          z: 2.17 * Math.sin((i * Math.PI) / 3 + 0.2),
+        },
+        chirality: 'none' as const,
+        charge: 0,
+      })),
+    ],
+    bonds: [
+      ...Array.from({ length: 6 }, (_, i) => ({
+        atomIndex1: i,
+        atomIndex2: (i + 1) % 6,
+        type: 'single' as const,
+        cisTransConfig: 'none' as const,
+      })),
+      ...Array.from({ length: 6 }, (_, i) => ({
+        atomIndex1: i,
+        atomIndex2: 6 + i,
+        type: 'single' as const,
+        cisTransConfig: 'none' as const,
+      })),
+      ...Array.from({ length: 6 }, (_, i) => ({
+        atomIndex1: i,
+        atomIndex2: 12 + i,
+        type: 'single' as const,
+        cisTransConfig: 'none' as const,
+      })),
+    ],
+  },
+  {
+    name: 'Formaldehyde',
+    nameCN: '甲醛',
+    formula: 'CH₂O',
+    description: 'Simplest aldehyde with C=O double bond',
+    atoms: [
+      { element: 'C', position: { x: 0, y: 0, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'O', position: { x: 0, y: 1.23, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: 0.94, y: -0.54, z: 0 }, chirality: 'none', charge: 0 },
+      { element: 'H', position: { x: -0.94, y: -0.54, z: 0 }, chirality: 'none', charge: 0 },
+    ],
+    bonds: [
+      { atomIndex1: 0, atomIndex2: 1, type: 'double', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 2, type: 'single', cisTransConfig: 'none' },
+      { atomIndex1: 0, atomIndex2: 3, type: 'single', cisTransConfig: 'none' },
+    ],
+  },
+];
