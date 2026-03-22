@@ -2,11 +2,11 @@ import { useMoleculeStore } from '../store/useMoleculeStore';
 import type { ToolMode } from '../types/chemistry';
 
 const tools: { mode: ToolMode; label: string; icon: string; description: string }[] = [
-  { mode: 'select', label: '选择', icon: '🖱️', description: '选择原子或化学键' },
-  { mode: 'addAtom', label: '添加原子', icon: '⚛️', description: '点击添加原子' },
-  { mode: 'addBond', label: '添加键', icon: '🔗', description: '选择两个原子添加化学键' },
-  { mode: 'move', label: '移动', icon: '✋', description: '拖拽移动原子' },
-  { mode: 'delete', label: '删除', icon: '🗑️', description: '点击删除原子或化学键' },
+  { mode: 'select', label: 'Select', icon: '🖱️', description: 'Select atoms or bonds' },
+  { mode: 'addAtom', label: 'Add Atom', icon: '⚛️', description: 'Click to add an atom' },
+  { mode: 'addBond', label: 'Add Bond', icon: '🔗', description: 'Select two atoms to create a bond' },
+  { mode: 'move', label: 'Move', icon: '✋', description: 'Drag to move atoms' },
+  { mode: 'delete', label: 'Delete', icon: '🗑️', description: 'Click to delete atoms or bonds' },
 ];
 
 export function Toolbar() {
@@ -26,8 +26,8 @@ export function Toolbar() {
   const hasSelection = selectedAtomIds.length > 0 || selectedBondIds.length > 0;
 
   return (
-    <div className="bg-gray-800 border-b border-gray-700 px-4 py-2 flex items-center gap-2 flex-wrap">
-      <div className="flex items-center gap-1 border-r border-gray-600 pr-3 mr-1">
+    <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-2 flex-wrap">
+      <div className="flex items-center gap-1 border-r border-gray-200 pr-3 mr-1">
         {tools.map(tool => (
           <button
             key={tool.mode}
@@ -35,7 +35,7 @@ export function Toolbar() {
             className={`px-3 py-1.5 rounded text-sm transition-colors ${
               toolMode === tool.mode
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
             title={tool.description}
           >
@@ -45,22 +45,22 @@ export function Toolbar() {
         ))}
       </div>
 
-      <div className="flex items-center gap-1 border-r border-gray-600 pr-3 mr-1">
+      <div className="flex items-center gap-1 border-r border-gray-200 pr-3 mr-1">
         <button
           onClick={undo}
           disabled={historyIndex <= 0}
-          className="px-2 py-1.5 rounded text-sm bg-gray-700 text-gray-300 hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
-          title="撤销 (Ctrl+Z)"
+          className="px-2 py-1.5 rounded text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
+          title="Undo (Ctrl+Z)"
         >
-          ↩ 撤销
+          ↩ Undo
         </button>
         <button
           onClick={redo}
           disabled={historyIndex >= history.length - 1}
-          className="px-2 py-1.5 rounded text-sm bg-gray-700 text-gray-300 hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
-          title="重做 (Ctrl+Y)"
+          className="px-2 py-1.5 rounded text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
+          title="Redo (Ctrl+Y)"
         >
-          ↪ 重做
+          ↪ Redo
         </button>
       </div>
 
@@ -68,27 +68,27 @@ export function Toolbar() {
         {hasSelection && (
           <button
             onClick={deleteSelected}
-            className="px-2 py-1.5 rounded text-sm bg-red-700 text-white hover:bg-red-600"
-            title="删除选中 (Delete)"
+            className="px-2 py-1.5 rounded text-sm bg-red-600 text-white hover:bg-red-500"
+            title="Delete Selected (Delete)"
           >
-            删除选中
+            Delete Selected
           </button>
         )}
         <button
           onClick={clearAll}
-          className="px-2 py-1.5 rounded text-sm bg-gray-700 text-gray-300 hover:bg-red-700 hover:text-white"
-          title="清空画布"
+          className="px-2 py-1.5 rounded text-sm bg-gray-100 text-gray-700 hover:bg-red-600 hover:text-white"
+          title="Clear Canvas"
         >
-          清空
+          Clear
         </button>
       </div>
 
-      <div className="ml-auto text-xs text-gray-500">
-        {toolMode === 'addBond' && '选择第一个原子，然后点击第二个原子创建化学键'}
-        {toolMode === 'addAtom' && '点击画布添加原子'}
-        {toolMode === 'select' && '点击选择，双击化学键切换键型'}
-        {toolMode === 'move' && '拖拽原子改变位置'}
-        {toolMode === 'delete' && '点击原子或化学键删除'}
+      <div className="ml-auto text-xs text-gray-400">
+        {toolMode === 'addBond' && 'Select the first atom, then click the second atom to create a bond'}
+        {toolMode === 'addAtom' && 'Click on canvas to add an atom'}
+        {toolMode === 'select' && 'Click to select, double-click a bond to toggle type'}
+        {toolMode === 'move' && 'Drag atoms to reposition'}
+        {toolMode === 'delete' && 'Click an atom or bond to delete'}
       </div>
     </div>
   );

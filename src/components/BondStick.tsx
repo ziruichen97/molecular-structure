@@ -174,7 +174,7 @@ export function BondStick({ bond }: BondStickProps) {
       {renderBonds()}
       {showBondInfo && (
         <Html position={[mid.x, mid.y + 0.2, mid.z]} center style={{ pointerEvents: 'none' }}>
-          <div className="text-[10px] bg-gray-900/90 text-gray-200 px-1.5 py-0.5 rounded whitespace-nowrap select-none">
+          <div className="text-[10px] bg-white/90 text-gray-700 px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap select-none">
             {bond.type} · {bondLength.toFixed(2)}Å
           </div>
         </Html>

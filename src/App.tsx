@@ -34,15 +34,15 @@ export default function App() {
   }, [undo, redo, deleteSelected]);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-900 text-white overflow-hidden">
-      <header className="bg-gray-800 border-b border-gray-700 px-4 py-2 flex items-center gap-3">
+    <div className="h-screen w-screen flex flex-col bg-gray-50 text-gray-900 overflow-hidden">
+      <header className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-lg font-bold">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white">
             M
           </div>
           <div>
             <h1 className="text-sm font-bold leading-tight">MolBuilder</h1>
-            <p className="text-[10px] text-gray-400 leading-tight">3D 分子结构构建器</p>
+            <p className="text-[10px] text-gray-400 leading-tight">3D Molecular Structure Builder</p>
           </div>
         </div>
       </header>

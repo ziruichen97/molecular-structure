@@ -133,7 +133,7 @@ export function AtomSphere({ atom }: AtomSphereProps) {
           center
           style={{ pointerEvents: 'none' }}
         >
-          <span className="text-xs font-bold text-purple-400 bg-gray-900/80 px-1 rounded">
+          <span className="text-xs font-bold text-purple-600 bg-white/90 px-1 rounded shadow-sm">
             ({atom.chirality})
           </span>
         </Html>

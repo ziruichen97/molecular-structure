@@ -55,10 +55,10 @@ function SceneContent() {
         args={[20, 20]}
         cellSize={0.5}
         cellThickness={0.5}
-        cellColor="#404040"
+        cellColor="#d0d0d0"
         sectionSize={2}
         sectionThickness={1}
-        sectionColor="#606060"
+        sectionColor="#b0b0b0"
         fadeDistance={30}
         fadeStrength={1}
         followCamera={false}
@@ -102,7 +102,7 @@ export function MoleculeScene() {
       <Canvas
         camera={{ position: [5, 5, 5], fov: 50 }}
         gl={{ antialias: true, alpha: false }}
-        style={{ background: '#1a1a2e' }}
+        style={{ background: '#f8f9fa' }}
       >
         <SceneContent />
       </Canvas>
