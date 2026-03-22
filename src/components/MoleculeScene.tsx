@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { Canvas, ThreeEvent } from '@react-three/fiber';
+import { Canvas, ThreeEvent, useThree } from '@react-three/fiber';
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Sphere, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { useMoleculeStore } from '../store/useMoleculeStore';
@@ -35,6 +35,12 @@ function DashedBond({ start, end }: { start: [number, number, number]; end: [num
   );
 }
 
+function SceneBackground() {
+  const { scene } = useThree();
+  scene.background = new THREE.Color('#f0f2f5');
+  return null;
+}
+
 function SceneContent() {
   const {
     atoms,
@@ -66,6 +72,7 @@ function SceneContent() {
 
   return (
     <>
+      <SceneBackground />
       <ambientLight intensity={0.6} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
       <directionalLight position={[-10, -10, -5]} intensity={0.3} />
