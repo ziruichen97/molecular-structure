@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useMemo } from 'react';
 import { Canvas, ThreeEvent, useThree } from '@react-three/fiber';
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Sphere, Line } from '@react-three/drei';
 import * as THREE from 'three';
@@ -8,7 +8,7 @@ import { BondStick } from './BondStick';
 
 function GhostAtom({ position }: { position: [number, number, number] }) {
   return (
-    <Sphere args={[0.18, 16, 16]} position={position}>
+    <Sphere args={[0.18, 12, 12]} position={position}>
       <meshStandardMaterial
         color="#999999"
         transparent
@@ -37,21 +37,33 @@ function DashedBond({ start, end }: { start: [number, number, number]; end: [num
 
 function SceneBackground() {
   const { scene } = useThree();
-  scene.background = new THREE.Color('#f0f2f5');
+  scene.background = new THREE.Color('#f1f3f6');
   return null;
 }
 
+const gridConfig = {
+  args: [20, 20] as [number, number],
+  cellSize: 0.5,
+  cellThickness: 0.5,
+  cellColor: '#d0d0d0',
+  sectionSize: 2,
+  sectionThickness: 1,
+  sectionColor: '#b0b0b0',
+  fadeDistance: 30,
+  fadeStrength: 1,
+  followCamera: false,
+  infiniteGrid: true,
+};
+
 function SceneContent() {
-  const {
-    atoms,
-    bonds,
-    toolMode,
-    selectedElement,
-    showAxes,
-    isomerPositions,
-    addAtom,
-    clearSelection,
-  } = useMoleculeStore();
+  const atoms = useMoleculeStore(s => s.atoms);
+  const bonds = useMoleculeStore(s => s.bonds);
+  const toolMode = useMoleculeStore(s => s.toolMode);
+  const selectedElement = useMoleculeStore(s => s.selectedElement);
+  const showAxes = useMoleculeStore(s => s.showAxes);
+  const isomerPositions = useMoleculeStore(s => s.isomerPositions);
+  const addAtom = useMoleculeStore(s => s.addAtom);
+  const clearSelection = useMoleculeStore(s => s.clearSelection);
 
   const planeRef = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0));
 
@@ -69,6 +81,12 @@ function SceneContent() {
       clearSelection();
     }
   }, [toolMode, selectedElement, addAtom, clearSelection]);
+
+  const mouseButtons = useMemo(() => ({
+    LEFT: toolMode === 'addAtom' || toolMode === 'addBond' ? undefined : THREE.MOUSE.ROTATE,
+    MIDDLE: THREE.MOUSE.DOLLY,
+    RIGHT: THREE.MOUSE.PAN,
+  }), [toolMode]);
 
   return (
     <>
@@ -88,19 +106,7 @@ function SceneContent() {
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      <Grid
-        args={[20, 20]}
-        cellSize={0.5}
-        cellThickness={0.5}
-        cellColor="#d0d0d0"
-        sectionSize={2}
-        sectionThickness={1}
-        sectionColor="#b0b0b0"
-        fadeDistance={30}
-        fadeStrength={1}
-        followCamera={false}
-        infiniteGrid
-      />
+      <Grid {...gridConfig} />
 
       {atoms.map(atom => (
         <AtomSphere key={atom.id} atom={atom} />
@@ -135,11 +141,7 @@ function SceneContent() {
         enablePan
         enableZoom
         enableRotate
-        mouseButtons={{
-          LEFT: toolMode === 'addAtom' || toolMode === 'addBond' ? undefined : THREE.MOUSE.ROTATE,
-          MIDDLE: THREE.MOUSE.DOLLY,
-          RIGHT: THREE.MOUSE.PAN,
-        }}
+        mouseButtons={mouseButtons}
         minDistance={2}
         maxDistance={50}
       />
@@ -152,8 +154,10 @@ export function MoleculeScene() {
     <div className="flex-1 h-full">
       <Canvas
         camera={{ position: [5, 5, 5], fov: 50 }}
-        gl={{ antialias: true, alpha: false }}
-        style={{ background: '#f8f9fa' }}
+        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        dpr={[1, 1.5]}
+        style={{ background: '#f1f3f6' }}
+        performance={{ min: 0.5 }}
       >
         <SceneContent />
       </Canvas>

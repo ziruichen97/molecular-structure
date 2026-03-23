@@ -1,15 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MoleculeScene } from './components/MoleculeScene';
 import { Toolbar } from './components/Toolbar';
 import { Sidebar } from './components/Sidebar';
 import { StatusBar } from './components/StatusBar';
 import { useMoleculeStore } from './store/useMoleculeStore';
 
+const TOOL_MODES = ['select', 'addAtom', 'addBond', 'move', 'delete'] as const;
+
 export default function App() {
-  const { undo, redo, deleteSelected } = useMoleculeStore();
+  const { undo, redo, deleteSelected, setToolMode, clearSelection, selectAll } = useMoleculeStore();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInputFocused = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
       if (e.ctrlKey || e.metaKey) {
         if (e.key === 'z' && !e.shiftKey) {
           e.preventDefault();
@@ -19,39 +25,53 @@ export default function App() {
           e.preventDefault();
           redo();
         }
-      }
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        const tag = (e.target as HTMLElement)?.tagName;
-        if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+        if (e.key === 'a' && !isInputFocused) {
           e.preventDefault();
-          deleteSelected();
+          selectAll();
         }
+      }
+
+      if (isInputFocused) return;
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        deleteSelected();
+      }
+
+      if (e.key === 'Escape') {
+        clearSelection();
+      }
+
+      const toolIndex = parseInt(e.key) - 1;
+      if (toolIndex >= 0 && toolIndex < TOOL_MODES.length && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        setToolMode(TOOL_MODES[toolIndex]);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, deleteSelected]);
+  }, [undo, redo, deleteSelected, setToolMode, clearSelection, selectAll]);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-50 text-gray-900 overflow-hidden">
-      <header className="bg-white border-b border-gray-200 px-4 py-2 flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white">
-            M
+    <div className="h-screen w-screen flex flex-col bg-surface-dim text-on-surface overflow-hidden">
+      <div className="bg-surface shadow-[0_1px_3px_rgba(0,0,0,0.08)] z-10">
+        <header className="px-6 py-3 flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-sm font-semibold text-on-primary shadow-sm">
+              M
+            </div>
+            <div>
+              <h1 className="text-[15px] font-semibold leading-tight text-on-surface">MolBuilder</h1>
+              <p className="text-[11px] text-on-surface-variant leading-tight">3D Molecular Structure Builder</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-bold leading-tight">MolBuilder</h1>
-            <p className="text-[10px] text-gray-400 leading-tight">3D Molecular Structure Builder</p>
-          </div>
-        </div>
-      </header>
+        </header>
+        <Toolbar />
+      </div>
 
-      <Toolbar />
-
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 relative">
         <MoleculeScene />
-        <Sidebar />
+        <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(v => !v)} />
       </div>
 
       <StatusBar />

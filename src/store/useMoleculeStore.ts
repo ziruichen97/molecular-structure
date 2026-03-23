@@ -50,6 +50,7 @@ interface MoleculeState {
 
   selectAtom: (id: string, multi?: boolean) => void;
   selectBond: (id: string, multi?: boolean) => void;
+  selectAll: () => void;
   clearSelection: () => void;
   deleteSelected: () => void;
 
@@ -225,6 +226,14 @@ export const useMoleculeStore = create<MoleculeState>((set, get) => ({
         };
       }
       return { selectedBondIds: [id], selectedAtomIds: [] };
+    });
+  },
+
+  selectAll: () => {
+    const { atoms, bonds } = get();
+    set({
+      selectedAtomIds: atoms.map(a => a.id),
+      selectedBondIds: bonds.map(b => b.id),
     });
   },
 
